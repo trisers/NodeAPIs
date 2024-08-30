@@ -1,10 +1,9 @@
 import express from "express";
-import exampleRoutes from "./route.example.js"; // Import other route files
-
+import productRoutes from "../routes/product.js";
 const routes = express.Router();
 
 // Use imported routes
-routes.use("/example", exampleRoutes);
+routes.use("/product", productRoutes);
 
 // Add more routes here as needed
 // router.use('/anotherRoute', anotherRouteFile);
