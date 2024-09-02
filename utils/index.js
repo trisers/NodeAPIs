@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 /**
  * Converts a string to a URL-friendly slug.
  * @param {string} str - The string to convert.
@@ -31,3 +33,10 @@ export const validateRequestBody = (required, body) => {
 
   return "";
 };
+
+/**
+ * Check for Valid Mongodb ID
+ * @param {Object} required - ID
+ * @returns {Boolean} - true or false
+ */
+export const isValidMongoDbId = (ID) => mongoose.Types.ObjectId.isValid(ID);
