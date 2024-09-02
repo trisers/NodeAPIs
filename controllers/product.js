@@ -1,6 +1,6 @@
 import { MESSAGES } from "../constants/messages.js";
 import Product from "../models/product.js";
-import { validateRequestBody } from "../utils/index.js";
+import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
 
 /**
  * Create a product
@@ -51,7 +51,7 @@ export const createProduct = async (req, res) => {
       sku,
     });
     if (!product) {
-      throw new Error(MESSAGES.FAILURE);
+      throw new Error(MESSAGES.DB_FAILURE);
     }
 
     res.status(201).json({ message: MESSAGES.PRODUCT.CREATED });
@@ -67,20 +67,25 @@ export const createProduct = async (req, res) => {
  * @returns {Object} - JSON response with success or error message
  */
 export const updateProduct = async (req, res) => {
-  const { product_id } = req.params;
-  const {
-    product_name,
-    product_description,
-    product_type,
-    product_tags,
-    product_gallery,
-    quantity,
-    original_price,
-    sale_price,
-    sku,
-  } = req.body;
-
   try {
+    const { product_id } = req.params;
+    const {
+      product_name,
+      product_description,
+      product_type,
+      product_tags,
+      product_gallery,
+      quantity,
+      original_price,
+      sale_price,
+      sku,
+    } = req.body;
+    if (!product_id) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.MISSING_ID });
+    }
+    if (!isValidMongoDbId(product_id)) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.INVALID_ID });
+    }
     const validate = validateRequestBody(
       {
         product_name: true,
@@ -116,7 +121,7 @@ export const updateProduct = async (req, res) => {
 
     res.status(204).json({ message: MESSAGES.PRODUCT.UPDATED });
   } catch (error) {
-    res.status(500).json({ message: MESSAGES.SERVER_ERROR, error });
+    res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
 };
 
@@ -127,9 +132,14 @@ export const updateProduct = async (req, res) => {
  * @returns {Object} - JSON response with product data or error message
  */
 export const getProduct = async (req, res) => {
-  const { product_id } = req.params;
-
   try {
+    const { product_id } = req.params;
+    if (!product_id) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.MISSING_ID });
+    }
+    if (!isValidMongoDbId(product_id)) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.INVALID_ID });
+    }
     const product = await Product.findById(product_id);
 
     if (!product) {
@@ -165,9 +175,14 @@ export const getAllProducts = async (req, res) => {
  */
 
 export const deleteProduct = async (req, res) => {
-  const { product_id } = req.params;
-
   try {
+    const { product_id } = req.params;
+    if (!product_id) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.MISSING_ID });
+    }
+    if (!isValidMongoDbId(product_id)) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.INVALID_ID });
+    }
     const product = await Product.findByIdAndDelete(product_id);
 
     if (!product) {
