@@ -40,3 +40,25 @@ export const validateRequestBody = (required, body) => {
  * @returns {Boolean} - true or false
  */
 export const isValidMongoDbId = (ID) => mongoose.Types.ObjectId.isValid(ID);
+/**
+ * Generates a 6-digit OTP.
+ *
+ * @returns {string} - A 6-digit OTP as a string.
+ */
+export const generateOTP = () => {
+  // Generate a random number between 100000 and 999999
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  return otp.toString();
+};
+
+/**
+ * Validates if the provided OTP is a valid 6-digit number.
+ *
+ * @param {string} otp - The OTP to validate.
+ * @returns {boolean} - Returns true if the OTP is valid, false otherwise.
+ */
+export const isValidOTP = (otp) => {
+  const otpRegex = /^\d{6}$/; // Regular expression to match exactly 6 digits
+  return otpRegex.test(otp);
+};
