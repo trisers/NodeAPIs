@@ -27,6 +27,16 @@ export const MESSAGES = {
     EMAIL_VERIFICATION_SUCCESS: "Email has been verified.",
     EMAIL_ALREADY_VERIFIED: "Email already verified.",
     NOT_FOUND: "User not found.",
+    EMAIL_NOT_VERIFIED:
+      "Email is not verified. Please verify email before login .",
+    ACCOUNT_PENDING:
+      "Your account is not active. Contact support team for help.",
+    ACCOUNT_SUSPENDED:
+      "Your account is suspended. Contact support team for help.",
+    INCORRECT_PASSWORD: "Incorrect password.",
+    OTP_EXPIRED: "OTP has been expired.",
+    NEW_CONFIRM_NOT_MATCH: "Password and confirm password should be same.",
+    PASSWORD_CHANGED: "Password has been changed.",
   },
   DB_FAILURE: "Database failure.",
   SERVER_ERROR: "Server error. Please try again later.",

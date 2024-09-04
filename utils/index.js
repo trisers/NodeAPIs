@@ -62,3 +62,18 @@ export const isValidOTP = (otp) => {
   const otpRegex = /^\d{6}$/; // Regular expression to match exactly 6 digits
   return otpRegex.test(otp);
 };
+
+/**
+ * Checks if the OTP is expired based on the provided future time.
+ *
+ * @param {string} futureTimeString - The future time as a date string.
+ * @returns {boolean} - Returns true if the OTP is expired, false otherwise.
+ */
+export const isOtpExpired = (futureTimeString) => {
+  const currentTime = new Date();
+  const futureTime = new Date(futureTimeString);
+  return futureTime < currentTime;
+};
+
+
+

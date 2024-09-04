@@ -35,7 +35,9 @@ const userSchema = new Schema(
     otp: {
       type: String,
     },
-
+    otp_expire: {
+      type: Date,
+    },
     last_login: Date,
     profile_picture: String,
   },
