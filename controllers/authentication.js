@@ -14,6 +14,10 @@ import {
   isValidOTP,
   validateRequestBody,
 } from "../utils/index.js";
+import {
+  MailOtpRequestTemplate,
+  MailUserRegistrationTemplate,
+} from "../utils/nodemailer_templates.js";
 
 /**
  * @description Register User
@@ -67,8 +71,9 @@ export const userRegister = async (req, res) => {
       throw new Error(MESSAGES.DB_FAILURE);
     }
     // nodemailer
+    await MailUserRegistrationTemplate(generatedOtp, email);
 
-    res.status(201).json({ message: MESSAGES.USER.OTP_SENT, generatedOtp });
+    res.status(201).json({ message: MESSAGES.USER.OTP_SENT });
   } catch (error) {
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
@@ -164,13 +169,14 @@ export const resendOtp = async (req, res) => {
     let otpExpireTime = new Date(Date.now() + 5 * 60 * 1000);
     let hashedOtp = await hashPassword(generatedOtp);
 
-    // nodemailer
-
     savedUser.otp = hashedOtp;
     savedUser.otp_expire = otpExpireTime;
     await savedUser.save();
 
-    res.status(200).json({ message: MESSAGES.USER.OTP_SENT, generatedOtp });
+    // nodemailer
+    await MailOtpRequestTemplate(generatedOtp, email);
+
+    res.status(200).json({ message: MESSAGES.USER.OTP_SENT });
   } catch (error) {
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
@@ -259,8 +265,9 @@ export const requestOTP = async (req, res) => {
     savedUser.otp_expire = otpExpireTime;
     await savedUser.save();
     // nodemailer
+    await MailOtpRequestTemplate(generatedOtp, email);
 
-    res.status(200).json({ message: MESSAGES.USER.OTP_SENT, generatedOtp });
+    res.status(200).json({ message: MESSAGES.USER.OTP_SENT });
   } catch (error) {
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
