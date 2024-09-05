@@ -37,8 +37,12 @@ export const MESSAGES = {
     OTP_EXPIRED: "OTP has been expired.",
     NEW_CONFIRM_NOT_MATCH: "Password and confirm password should be same.",
     PASSWORD_CHANGED: "Password has been changed.",
+    PROFILE_UPDATED: "Profile has been updated.",
   },
+  NO_TOKEN_FOUND: "No token provided",
+  TOKEN_EXPIRED: "Token expired",
   DB_FAILURE: "Database failure.",
   SERVER_ERROR: "Server error. Please try again later.",
   UNAUTHORIZED: "Unauthorized access.",
+  ACCESS_DENIED: "Access denied.",
 };

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { MESSAGES } from "../constants/messages.js";
 import {
   checkUserExistWithEmail,
@@ -127,11 +128,13 @@ export const verifyEmail = async (req, res) => {
     await savedUser.save();
 
     let accessToken = generateAccessToken({
+      userId: savedUser._id,
       name: savedUser.full_name,
       email: savedUser.email,
       role: savedUser.role,
     });
     let refreshToken = generateRefreshToken({
+      userId: savedUser._id,
       name: savedUser.full_name,
       email: savedUser.email,
       role: savedUser.role,
@@ -224,11 +227,13 @@ export const login = async (req, res) => {
     }
 
     let accessToken = generateAccessToken({
+      userId: savedUser._id,
       name: savedUser.full_name,
       email: savedUser.email,
       role: savedUser.role,
     });
     let refreshToken = generateRefreshToken({
+      userId: savedUser._id,
       name: savedUser.full_name,
       email: savedUser.email,
       role: savedUser.role,
@@ -273,7 +278,7 @@ export const requestOTP = async (req, res) => {
   }
 };
 /**
- * @description Forget password
+ * @description Reset password using One time verfication Password
  * @param {Express.Request} req - The request object.
  * @param {Express.Response} res - The response object.
  * @returns {Promise<void>}
@@ -333,6 +338,27 @@ export const resetPassword = async (req, res) => {
     await savedUser.save();
 
     res.status(200).json({ message: MESSAGES.USER.PASSWORD_CHANGED });
+  } catch (error) {
+    res.status(500).json({ message: MESSAGES.SERVER_ERROR });
+  }
+};
+/**
+ * @description Reset password using One time verfication Password
+ * @param {Express.Request} req - The request object.
+ * @param {Express.Response} res - The response object.
+ * @returns {Promise<void>}
+ */
+
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const { user } = req;
+    let accessToken = generateAccessToken({
+      userId: user.userId,
+      name: user.full_name,
+      email: user.email,
+      role: user.role,
+    });
+    res.status(200).json({ accessToken });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
