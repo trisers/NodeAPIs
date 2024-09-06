@@ -1,8 +1,10 @@
 import express from "express";
-import productRoutes from "../routes/product.js";
-import orderRoutes from "../routes/order.js";
-import authRoutes from "../routes/authentication.js";
-import userRoutes from "../routes/user.js";
+import productRoutes from "./product.js";
+import orderRoutes from "./order.js";
+import authRoutes from "./authentication.js";
+import userRoutes from "./user.js";
+import capabilitiesRoutes from "./capabilities.js";
+import { verifySuperAdminToken } from "../middlewares/superadmin.js";
 const routes = express.Router();
 
 // Use imported routes
@@ -10,6 +12,7 @@ routes.use("/product", productRoutes);
 routes.use("/order", orderRoutes);
 routes.use("/auth", authRoutes);
 routes.use("/user", userRoutes);
+routes.use("/capabilities", verifySuperAdminToken, capabilitiesRoutes);
 
 // Add more routes here as needed
 // router.use('/anotherRoute', anotherRouteFile);
