@@ -49,6 +49,7 @@ export const MESSAGES = {
   },
   DASHBOARD_USER: {
     ADDED: "added ask them to verify email.",
+    MISSING_ID: "Missing ID",
   },
   NO_TOKEN_FOUND: "No token provided",
   TOKEN_EXPIRED: "Token expired",

@@ -7,6 +7,6 @@ import {
 const router = express.Router();
 
 router.post("/", addDashboardUser);
-router.patch("/", updateDashboardUser);
+router.patch("/:id", updateDashboardUser);
 
 export default router;
