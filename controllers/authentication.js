@@ -126,6 +126,11 @@ export const verifyEmail = async (req, res) => {
     savedUser.otp = "";
 
     await savedUser.save();
+    if (savedUser.role !== "customer") {
+      return res.status(200).json({
+        message: MESSAGES.USER.EMAIL_VERIFICATION_SUCCESS,
+      });
+    }
 
     let accessToken = generateAccessToken({
       userId: savedUser._id,

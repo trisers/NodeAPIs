@@ -20,7 +20,7 @@ const userSchema = new Schema(
 
     role: {
       type: String,
-      enum: ["admin", "customer"],
+      enum: ["admin", "customer", "manager"],
       default: "customer",
     },
     status: {
@@ -38,6 +38,7 @@ const userSchema = new Schema(
     otp_expire: {
       type: Date,
     },
+    access_levels: [],
     last_login: Date,
     profile_picture: String,
   },

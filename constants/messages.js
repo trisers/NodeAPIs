@@ -47,6 +47,9 @@ export const MESSAGES = {
     DELETED: "Capability has been deleted.",
     DUPLICATE_ENTRIES: "Duplicate entries found",
   },
+  DASHBOARD_USER: {
+    ADDED: "added ask them to verify email.",
+  },
   NO_TOKEN_FOUND: "No token provided",
   TOKEN_EXPIRED: "Token expired",
   DB_FAILURE: "Database failure.",

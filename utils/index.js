@@ -75,5 +75,43 @@ export const isOtpExpired = (futureTimeString) => {
   return futureTime < currentTime;
 };
 
+/**
+ * Generates random alphanumeric password
+ *
+ * @param {string} .
+ * @returns {boolean} - Returns random generated password.
+ */
 
+export const generateRandomPassword = () => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let password = "";
 
+  for (let i = 0; i < 16; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    password += characters[randomIndex];
+  }
+
+  return password;
+};
+/**
+ * Generates mongoDB Validate Error Message
+ * @param {string} .
+ * @returns {boolean} - Returns Validate Error Message.
+ */
+
+export const generateDBValidateErrorMessage = (error) => {
+  let message = "";
+  const errors = Object.entries(error?.errors);
+
+  errors.map(([key, value], index) => {
+    message += `${key} can only be ${value.properties.enumValues.join(", ")}`;
+
+    if (index === errors.length - 1) {
+      message += ".";
+    } else {
+      message += ", ";
+    }
+  });
+  return message;
+};
