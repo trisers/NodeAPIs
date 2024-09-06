@@ -87,9 +87,14 @@ export const addDashboardUser = async (req, res) => {
 export const updateDashboardUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, last_login, otp, otp_expire, ...payload } = req.body;
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: MESSAGES.DASHBOARD_USER.MISSING_ID });
+    }
+    const { _id, email, last_login, otp, otp_expire, ...payload } = req.body;
 
-    const savedUser = await User.findByIdAndUpdate(id, payload);
+    const savedUser = await User.findByIdAndUpdate(id, payload, { new: true });
     if (!savedUser) {
       return res.status(404).json({ message: MESSAGES.USER.NOT_FOUND });
     }
@@ -104,5 +109,3 @@ export const updateDashboardUser = async (req, res) => {
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
 };
-
-
