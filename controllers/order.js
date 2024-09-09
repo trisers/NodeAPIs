@@ -1,4 +1,5 @@
 import { MESSAGES } from "../constants/messages.js";
+import order from "../models/order.js";
 import Order from "../models/order.js";
 import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
 /**
@@ -9,8 +10,86 @@ import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
  */
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("items.product_ID");
-    res.status(200).json(orders);
+    const page = parseInt(req.query.page || 1);
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const skip = (page - 1) * pageSize;
+
+    const [result] = await Order.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.product_ID",
+          foreignField: "_id",
+          as: "productDetails",
+          pipeline: [
+            {
+              $project: {
+                _id: 1,
+                product_name: 1,
+                slug: 1,
+                product_description: 1,
+                product_type: 1,
+                product_tags: 1,
+                product_gallery: 1,
+                original_price: 1,
+                sale_price: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          items: {
+            $map: {
+              input: "$items",
+              as: "item",
+              in: {
+                $mergeObjects: [
+                  "$$item", // Keep all fields from the original item
+                  {
+                    productDetails: {
+                      $arrayElemAt: [
+                        {
+                          $filter: {
+                            input: "$productDetails",
+                            as: "product",
+                            cond: {
+                              $eq: ["$$product._id", "$$item.product_ID"],
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $unset: "productDetails",
+      },
+      {
+        $facet: {
+          orders: [{ $skip: skip }, { $limit: pageSize }],
+          totalOrders: [{ $count: "count" }],
+        },
+      },
+    ]);
+
+    const orders = result.orders;
+    const totalOrders = result.totalOrders[0]?.count || 0;
+    const totalPages = Math.ceil(totalOrders / pageSize);
+
+    res.status(200).json({
+      orders,
+      totalOrders,
+      currentPage: page,
+      nextPage: page < totalPages ? page + 1 : null,
+    });
   } catch (error) {
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
