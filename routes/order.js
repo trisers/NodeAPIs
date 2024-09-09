@@ -6,11 +6,12 @@ import {
   updateOrder,
   deleteOrder,
 } from "../controllers/order.js";
+import { verifySuperAdminToken } from "../middlewares/superadmin.js";
 
 const router = express.Router();
 
-router.post("/", createOrder);
-router.get("/", getAllOrders);
+router.post("/", verifySuperAdminToken, createOrder);
+router.get("/", verifySuperAdminToken, getAllOrders);
 
 router.get("/:order_id", getOrderById);
 router.patch("/:order_id", updateOrder);
