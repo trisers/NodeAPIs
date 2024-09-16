@@ -5,11 +5,17 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import connectDB from "./config/database.js";
 import routes from "./routes/index.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config(); // Load environment variables
 
 const app = express();
 const PORT = process.env.PORT;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+console.log(__dirname);
+
 // Connect Databse
 connectDB();
 
@@ -23,6 +29,9 @@ let corsOption = {
 app.use(cors(corsOption)); // Enable CORS
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(morgan("dev")); // Log requests to the console
+
+// Serve the 'uploads' folder statically
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 // Basic Routes
 app.get("/", (req, res) => {

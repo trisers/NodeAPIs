@@ -115,3 +115,21 @@ export const generateDBValidateErrorMessage = (error) => {
   });
   return message;
 };
+/**
+ * Convert Formdata body to json object by parsing
+ * @param {string} .
+ * @returns {boolean} - Returns Validate Error Message.
+ */
+
+export const parseFormDataBody = (body, fields) => {
+  let result = {};
+
+  for (const [field, value] of Object.entries(body)) {
+    if (fields.includes(field.toString())) {
+      result[field] = JSON.parse(value);
+    } else {
+      result[field] = value;
+    }
+  }
+  return result;
+};

@@ -1,6 +1,10 @@
 import { MESSAGES } from "../constants/messages.js";
 import Collection from "../models/collections.js";
-import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
+import {
+  isValidMongoDbId,
+  parseFormDataBody,
+  validateRequestBody,
+} from "../utils/index.js";
 
 /**
  * Create a Collection
@@ -10,25 +14,37 @@ import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
  */
 export const createCollection = async (req, res) => {
   try {
-    const {
+    let parsedBody = parseFormDataBody(req.body, [
+      "collection_tags",
+      "collection_products",
+    ]);
+
+    let {
       collection_name,
       collection_description,
       collection_tags,
       collection_image,
       collection_products,
-    } = req.body;
+    } = parsedBody;
+    if (req?.file?.filename) {
+      collection_image = `/uploads/collections/${req?.file?.filename}`;
+    } else {
+      collection_image = `/uploads/static/no-image.png`;
+    }
+
     const validate = validateRequestBody(
       {
         collection_name: true,
         collection_description: true,
         collection_tags: true,
-        collection_image: true,
+        collection_image: false,
       },
-      req.body
+      parsedBody
     );
     if (validate) {
       return res.status(422).json({ message: validate });
     }
+
     const collection = await Collection.create({
       collection_name,
       collection_description,
@@ -119,14 +135,21 @@ export const getCollection = async (req, res) => {
  */
 export const updateCollection = async (req, res) => {
   try {
+    console.log(req.body);
+    let parsedBody = parseFormDataBody(req.body, [
+      "collection_tags",
+      "collection_products",
+    ]);
     const {
       collection_name,
       collection_description,
       collection_tags,
-      collection_image,
       collection_products,
-    } = req.body;
+    } = parsedBody;
+
     const { collection_id } = req.params;
+    let new_collection_image = ``;
+
     if (!collection_id) {
       return res.status(400).json({ message: MESSAGES.COLLECTION.MISSING_ID });
     }
@@ -138,23 +161,32 @@ export const updateCollection = async (req, res) => {
         collection_name: true,
         collection_description: true,
         collection_tags: false,
-        collection_image: true,
+        collection_image: false,
         collection_products: false,
       },
-      req.body
+      parsedBody
     );
     if (validate) {
       return res.status(422).json({ message: validate });
     }
+    if (req?.file?.filename) {
+      new_collection_image = `/uploads/collections/${req?.file?.filename}`;
+    }
+    let bodyTobeUpdate = {
+      collection_name,
+      collection_description,
+      collection_tags,
+      collection_products,
+    };
+    if (new_collection_image) {
+      bodyTobeUpdate = {
+        ...bodyTobeUpdate,
+        collection_image: new_collection_image,
+      };
+    }
     const collection = await Collection.findByIdAndUpdate(
       collection_id,
-      {
-        collection_name,
-        collection_description,
-        collection_tags,
-        collection_image,
-        collection_products,
-      },
+      bodyTobeUpdate,
       { new: true }
     );
     if (!collection) {
