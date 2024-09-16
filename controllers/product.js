@@ -1,6 +1,10 @@
 import { MESSAGES } from "../constants/messages.js";
 import Product from "../models/product.js";
-import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
+import {
+  isValidMongoDbId,
+  parseFormDataBody,
+  validateRequestBody,
+} from "../utils/index.js";
 
 /**
  * Create a product
@@ -9,32 +13,37 @@ import { isValidMongoDbId, validateRequestBody } from "../utils/index.js";
  * @returns {Object} - JSON response with success or error message
  */
 export const createProduct = async (req, res) => {
-  const {
-    product_name,
-    product_description,
-    product_type,
-    product_tags,
-    product_gallery,
-    quantity,
-    original_price,
-    sale_price,
-    sku,
-  } = req.body;
-
   try {
+    const parsedBody = parseFormDataBody(req.body, ["product_tags"]);
+    let {
+      product_name,
+      product_description,
+      product_type,
+      product_tags,
+      quantity,
+      original_price,
+      sale_price,
+      sku,
+    } = parsedBody;
+    let product_gallery = [];
+
+    req?.files?.map((file) => {
+      product_gallery.push(`/uploads/products/${file.filename}`);
+    });
+
     const validate = validateRequestBody(
       {
         product_name: true,
         product_description: true,
         product_type: true,
-        product_tags: true,
-        product_gallery: true,
+        product_tags: false,
+        product_gallery: false,
         quantity: true,
         original_price: true,
         sale_price: true,
         sku: true,
       },
-      req.body
+      parsedBody
     );
     if (validate) {
       return res.status(422).json({ message: validate });
@@ -50,6 +59,7 @@ export const createProduct = async (req, res) => {
       sale_price,
       sku,
     });
+
     if (!product) {
       throw new Error(MESSAGES.DB_FAILURE);
     }
@@ -68,6 +78,10 @@ export const createProduct = async (req, res) => {
  */
 export const updateProduct = async (req, res) => {
   try {
+    const parsedBody = parseFormDataBody(req.body, [
+      "product_tags",
+      "product_gallery",
+    ]);
     const { product_id } = req.params;
     const {
       product_name,
@@ -79,7 +93,12 @@ export const updateProduct = async (req, res) => {
       original_price,
       sale_price,
       sku,
-    } = req.body;
+    } = parsedBody;
+
+    req?.files?.map((file) => {
+      product_gallery.push(`/uploads/products/${file.filename}`);
+    });
+
     if (!product_id) {
       return res.status(400).json({ message: MESSAGES.PRODUCT.MISSING_ID });
     }
@@ -98,7 +117,7 @@ export const updateProduct = async (req, res) => {
         sale_price: true,
         sku: true,
       },
-      req.body
+      parsedBody
     );
     if (validate) {
       return res.status(422).json({ message: validate });
@@ -119,7 +138,7 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ message: MESSAGES.PRODUCT.NOT_FOUND });
     }
 
-    res.status(204).json({ message: MESSAGES.PRODUCT.UPDATED });
+    res.status(200).json({ message: MESSAGES.PRODUCT.UPDATED });
   } catch (error) {
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
