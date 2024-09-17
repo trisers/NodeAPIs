@@ -29,3 +29,15 @@ export const createMulter = (folder) => {
 
   return multer({ storage });
 };
+
+// Upload multiple files using single field
+export const uploadMultipleFiles = (folder, fieldName, maxCount) => {
+  const upload = createMulter(folder);
+  return upload.array(fieldName, maxCount);
+};
+
+// Function to handle file uploads from multiple fields
+export const uploadFilesFromMultipleFields = (folder, fields) => {
+  const upload = createMulter(folder);
+  return upload.fields(fields);
+};
