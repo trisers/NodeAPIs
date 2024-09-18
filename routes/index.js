@@ -6,6 +6,7 @@ import userRoutes from "./user.js";
 import capabilitiesRoutes from "./capabilities.js";
 import dashboardUserRoutes from "./dashboard-user.js";
 import collectionRoutes from "./collection.js";
+import blogRoutes from "./blog.js";
 import { verifySuperAdminToken } from "../middlewares/superadmin.js";
 const routes = express.Router();
 
@@ -17,6 +18,7 @@ routes.use("/user", userRoutes);
 routes.use("/capabilities", verifySuperAdminToken, capabilitiesRoutes);
 routes.use("/dashboard-user", verifySuperAdminToken, dashboardUserRoutes);
 routes.use("/collection", collectionRoutes);
+routes.use("/blog", blogRoutes);
 
 // Add more routes here as needed
 // router.use('/anotherRoute', anotherRouteFile);

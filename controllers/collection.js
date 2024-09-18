@@ -135,7 +135,6 @@ export const getCollection = async (req, res) => {
  */
 export const updateCollection = async (req, res) => {
   try {
-    console.log(req.body);
     let parsedBody = parseFormDataBody(req.body, [
       "collection_tags",
       "collection_products",
