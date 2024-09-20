@@ -193,9 +193,9 @@ export const deleteBlog = async (req, res) => {
     if (!isValidMongoDbId(id)) {
       return res.status(400).json({ message: MESSAGES.BLOG.INVALID_ID });
     }
-    const deletedCapability = await Blog.findByIdAndDelete(id);
+    const deletedBlog = await Blog.findByIdAndDelete(id);
 
-    if (!deletedCapability) {
+    if (!deletedBlog) {
       return res.status(404).json({ message: MESSAGES.BLOG.NOT_FOUND });
     }
 
