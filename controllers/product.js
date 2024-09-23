@@ -14,7 +14,13 @@ import {
  */
 export const createProduct = async (req, res) => {
   try {
-    const parsedBody = parseFormDataBody(req.body, ["product_tags"]);
+    const parsedBody = parseFormDataBody(req.body, [
+      "product_tags",
+      "product_brand",
+      "product_category",
+      "product_colors",
+      "product_sizes",
+    ]);
     let {
       product_name,
       product_description,
@@ -24,6 +30,10 @@ export const createProduct = async (req, res) => {
       original_price,
       sale_price,
       sku,
+      product_brand,
+      product_category,
+      product_colors,
+      product_sizes,
     } = parsedBody;
     let product_gallery = [];
 
@@ -58,6 +68,10 @@ export const createProduct = async (req, res) => {
       original_price,
       sale_price,
       sku,
+      product_brand,
+      product_category,
+      product_colors,
+      product_sizes,
     });
 
     if (!product) {
@@ -81,6 +95,10 @@ export const updateProduct = async (req, res) => {
     const parsedBody = parseFormDataBody(req.body, [
       "product_tags",
       "product_gallery",
+      "product_brand",
+      "product_category",
+      "product_colors",
+      "product_sizes",
     ]);
     const { product_id } = req.params;
     const {
@@ -93,6 +111,10 @@ export const updateProduct = async (req, res) => {
       original_price,
       sale_price,
       sku,
+      product_brand,
+      product_category,
+      product_colors,
+      product_sizes,
     } = parsedBody;
 
     req?.files?.map((file) => {
@@ -116,6 +138,10 @@ export const updateProduct = async (req, res) => {
         original_price: true,
         sale_price: true,
         sku: true,
+        product_brand: true,
+        product_category: true,
+        product_colors: true,
+        product_sizes: true,
       },
       parsedBody
     );
@@ -132,6 +158,10 @@ export const updateProduct = async (req, res) => {
       original_price,
       sale_price,
       sku,
+      product_brand,
+      product_category,
+      product_colors,
+      product_sizes,
     });
 
     if (!product) {

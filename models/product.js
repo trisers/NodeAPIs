@@ -48,6 +48,14 @@ const productSchema = new Schema(
       type: String,
       trim: true,
     },
+    product_brand: {
+      type: String,
+    },
+    product_category: {
+      type: String,
+    },
+    product_colors: [{ name: String, value: String }],
+    product_sizes: [{ name: String, value: String }],
   },
   { timestamps: true }
 );
