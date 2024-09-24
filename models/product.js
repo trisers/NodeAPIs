@@ -44,6 +44,11 @@ const productSchema = new Schema(
       required: [true, "Sale price is required."],
       min: [0, "Sale price cannot be negative."],
     },
+    product_status: {
+      type: String,
+      default: "draft",
+    },
+
     sku: {
       type: String,
       trim: true,
@@ -52,6 +57,9 @@ const productSchema = new Schema(
       type: String,
     },
     product_category: {
+      type: String,
+    },
+    product_visibility: {
       type: String,
     },
     product_colors: [{ name: String, value: String }],

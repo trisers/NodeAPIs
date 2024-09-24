@@ -34,6 +34,8 @@ export const createProduct = async (req, res) => {
       product_category,
       product_colors,
       product_sizes,
+      product_status,
+      product_visibility,
     } = parsedBody;
     let product_gallery = [];
 
@@ -52,6 +54,12 @@ export const createProduct = async (req, res) => {
         original_price: true,
         sale_price: true,
         sku: true,
+        product_brand: true,
+        product_category: true,
+        product_colors: true,
+        product_sizes: true,
+        product_status: true,
+        product_visibility: true,
       },
       parsedBody
     );
@@ -72,6 +80,8 @@ export const createProduct = async (req, res) => {
       product_category,
       product_colors,
       product_sizes,
+      product_status,
+      product_visibility,
     });
 
     if (!product) {
@@ -115,6 +125,8 @@ export const updateProduct = async (req, res) => {
       product_category,
       product_colors,
       product_sizes,
+      product_status,
+      product_visibility,
     } = parsedBody;
 
     req?.files?.map((file) => {
@@ -142,6 +154,8 @@ export const updateProduct = async (req, res) => {
         product_category: true,
         product_colors: true,
         product_sizes: true,
+        product_status: true,
+        product_visibility: true,
       },
       parsedBody
     );
@@ -162,6 +176,8 @@ export const updateProduct = async (req, res) => {
       product_category,
       product_colors,
       product_sizes,
+      product_status,
+      product_visibility,
     });
 
     if (!product) {
