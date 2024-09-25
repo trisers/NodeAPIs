@@ -28,10 +28,11 @@ The project is organized into the following main sections:
 - **`constants/`**: Constant variables used accross the entire project.
 - **`controllers/`**: Contains the logic for handling requests and responses.
 - **`helper/`**: Reusable helper functions for business logics.
+- **`middlewares/`**: Includes reusable middleware functions. .
 - **`models/`**: Defines the MongoDB schemas and models.
 - **`routes/`**: Manages the API routes and middleware.
+- **`uploads/`**: Contains file uploaded from client side.
 - **`utils/`**: Contains utility functions and helper methods.
-<!-- - **`middlewares/`**: Includes reusable middleware functions. -->
 
 ### Setup and Installation
 
