@@ -7,10 +7,11 @@ import {
   deleteOrder,
 } from "../controllers/order.js";
 import { verifySuperAdminToken } from "../middlewares/superadmin.js";
+import { verifyToken } from "../middlewares/authentication.js";
 
 const router = express.Router();
 
-router.post("/", verifySuperAdminToken, createOrder);
+router.post("/", verifyToken, createOrder);
 router.get("/", verifySuperAdminToken, getAllOrders);
 
 router.get("/:order_id", getOrderById);
