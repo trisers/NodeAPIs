@@ -47,6 +47,7 @@ const productSchema = new Schema(
     product_status: {
       type: String,
       default: "draft",
+      enum: ["draft", "published"],
     },
 
     sku: {
@@ -59,9 +60,7 @@ const productSchema = new Schema(
     product_category: {
       type: String,
     },
-    product_visibility: {
-      type: String,
-    },
+
     product_colors: [{ name: String, value: String }],
     product_sizes: [{ name: String, value: String }],
   },
