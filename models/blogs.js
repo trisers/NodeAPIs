@@ -26,13 +26,14 @@ const blogSchema = new Schema(
     blog_thumbnail: {
       type: String,
     },
-    publishDate: {
+    publish_date: {
       type: Date,
       default: Date.now,
     },
-    drafted: {
-      type: Boolean,
-      default: true,
+    blog_status: {
+      type: String,
+      default: "draft",
+      enum: ["draft", "published", "scheduled"],
     },
   },
   {

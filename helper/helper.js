@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 // import sendgrid from "../config/sendgrid.js";
 import sendGridMail from "../config/sendgrid.js";
+import Blog from "../models/blogs.js";
 
 const {
   JWT_SECRET,
@@ -165,4 +166,17 @@ export const sendOTP = async (email, otp) => {
     throw new Error(error);
   }
 };
+// Update Blog Status from scheduled to published
+export const updateScheduledBlogs = async () => {
+  const today = new Date();
 
+  await Blog.updateMany(
+    {
+      blog_status: "scheduled",
+      publish_date: { $lte: today },
+    },
+    {
+      $set: { blog_status: "published" },
+    }
+  );
+};
