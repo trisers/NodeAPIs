@@ -15,8 +15,8 @@ export const MESSAGES = {
     UPDATED: "Product has been updated.",
     DELETED: "Product has been deleted.",
     NOT_FOUND: "Product not found.",
-    MISSING_ID: "Missing product ID.",
-    INVALID_ID: "Invalid product ID.",
+    MISSING_SLUG: "Missing product slug.",
+    INVALID_SLUG: "Invalid product slug.",
   },
   USER: {
     EMAIL_ALREADY_EXIST: "Email already in use.",
