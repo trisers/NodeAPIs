@@ -34,6 +34,7 @@ export const createProduct = async (req, res) => {
       product_sizes,
       product_status,
       product_code,
+      sku,
     } = parsedBody;
     let product_gallery = [];
 
@@ -50,7 +51,6 @@ export const createProduct = async (req, res) => {
         product_gallery: false,
         quantity: true,
         price: true,
-
         product_brand: true,
         product_category: true,
         product_colors: true,
@@ -63,7 +63,7 @@ export const createProduct = async (req, res) => {
     if (validate) {
       return res.status(422).json({ message: validate });
     }
-    let sku = generateSKU();
+
     const product = await Product.create({
       product_name,
       product_description,
