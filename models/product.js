@@ -35,21 +35,24 @@ const productSchema = new Schema(
       min: [0, "Quantity cannot be negative."],
       default: 0,
     },
-    original_price: {
+    price: {
       type: Number,
-      min: [0, "Original price cannot be negative."],
+      required: [true, "Price is required."],
+      min: [0, "Price cannot be negative."],
     },
-    sale_price: {
+    discount: {
       type: Number,
-      required: [true, "Sale price is required."],
-      min: [0, "Sale price cannot be negative."],
+      default: 0,
+    },
+    tax: {
+      type: Number,
+      default: 0,
     },
     product_status: {
       type: String,
       default: "draft",
       enum: ["draft", "published"],
     },
-
     sku: {
       type: String,
       trim: true,
@@ -60,9 +63,16 @@ const productSchema = new Schema(
     product_category: {
       type: String,
     },
-
     product_colors: [{ name: String, value: String }],
     product_sizes: [{ name: String, value: String }],
+    product_gender: {
+      type: String,
+      enum: ["male", "female", "other", "unisex"],
+    },
+    product_code: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

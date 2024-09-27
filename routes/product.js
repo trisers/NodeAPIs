@@ -4,6 +4,7 @@ import {
   deleteProduct,
   getAllProducts,
   getProduct,
+  getUniqueProductCode,
   updateProduct,
 } from "../controllers/product.js";
 import { verifySuperAdminToken } from "../middlewares/superadmin.js";
@@ -15,8 +16,9 @@ const uploadGallery = uploadMultipleFiles("/uploads/products", "gallery", 10);
 
 router.post("/", verifySuperAdminToken, uploadGallery, createProduct);
 router.get("/", getAllProducts);
+router.get("/code", getUniqueProductCode);
 
-router.get("/:product_id", getProduct);
+router.get("/:slug", getProduct);
 router.put("/:product_id", verifySuperAdminToken, uploadGallery, updateProduct);
 router.delete("/:product_id", verifySuperAdminToken, deleteProduct);
 

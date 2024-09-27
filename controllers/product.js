@@ -16,8 +16,6 @@ export const createProduct = async (req, res) => {
   try {
     const parsedBody = parseFormDataBody(req.body, [
       "product_tags",
-      "product_brand",
-      "product_category",
       "product_colors",
       "product_sizes",
     ]);
@@ -27,14 +25,15 @@ export const createProduct = async (req, res) => {
       product_type,
       product_tags,
       quantity,
-      original_price,
-      sale_price,
-      sku,
+      price,
+      discount,
+      tax,
       product_brand,
       product_category,
       product_colors,
       product_sizes,
       product_status,
+      product_code,
     } = parsedBody;
     let product_gallery = [];
 
@@ -50,20 +49,21 @@ export const createProduct = async (req, res) => {
         product_tags: false,
         product_gallery: false,
         quantity: true,
-        original_price: true,
-        sale_price: true,
-        sku: true,
+        price: true,
+
         product_brand: true,
         product_category: true,
         product_colors: true,
         product_sizes: true,
         product_status: true,
+        product_code: true,
       },
       parsedBody
     );
     if (validate) {
       return res.status(422).json({ message: validate });
     }
+    let sku = generateSKU();
     const product = await Product.create({
       product_name,
       product_description,
@@ -71,14 +71,16 @@ export const createProduct = async (req, res) => {
       product_tags,
       product_gallery,
       quantity,
-      original_price,
-      sale_price,
+      price,
+      discount,
+      tax,
       sku,
       product_brand,
       product_category,
       product_colors,
       product_sizes,
       product_status,
+      product_code,
     });
 
     if (!product) {
@@ -87,6 +89,7 @@ export const createProduct = async (req, res) => {
 
     res.status(201).json({ message: MESSAGES.PRODUCT.CREATED });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
 };
@@ -102,8 +105,6 @@ export const updateProduct = async (req, res) => {
     const parsedBody = parseFormDataBody(req.body, [
       "product_tags",
       "product_gallery",
-      "product_brand",
-      "product_category",
       "product_colors",
       "product_sizes",
     ]);
@@ -115,8 +116,9 @@ export const updateProduct = async (req, res) => {
       product_tags,
       product_gallery,
       quantity,
-      original_price,
-      sale_price,
+      price,
+      discount,
+      tax,
       sku,
       product_brand,
       product_category,
@@ -143,8 +145,7 @@ export const updateProduct = async (req, res) => {
         product_tags: true,
         product_gallery: true,
         quantity: true,
-        original_price: true,
-        sale_price: true,
+        price: true,
         sku: true,
         product_brand: true,
         product_category: true,
@@ -164,8 +165,9 @@ export const updateProduct = async (req, res) => {
       product_tags,
       product_gallery,
       quantity,
-      original_price,
-      sale_price,
+      price,
+      discount,
+      tax,
       sku,
       product_brand,
       product_category,
@@ -192,15 +194,11 @@ export const updateProduct = async (req, res) => {
  */
 export const getProduct = async (req, res) => {
   try {
-    const { product_id } = req.params;
-    if (!product_id) {
-      return res.status(400).json({ message: MESSAGES.PRODUCT.MISSING_ID });
+    const { slug } = req.params;
+    if (!slug) {
+      return res.status(400).json({ message: MESSAGES.PRODUCT.MISSING_SLUG });
     }
-    if (!isValidMongoDbId(product_id)) {
-      return res.status(400).json({ message: MESSAGES.PRODUCT.INVALID_ID });
-    }
-    const product = await Product.findById(product_id);
-
+    const product = await Product.findOne({ slug });
     if (!product) {
       return res.status(404).json({ message: MESSAGES.PRODUCT.NOT_FOUND });
     }
@@ -218,11 +216,15 @@ export const getProduct = async (req, res) => {
  */
 export const getAllProducts = async (req, res) => {
   try {
+    const q = req.query.q || "published";
     const page = parseInt(req.query.page || 1);
     const pageSize = parseInt(req.query.pageSize || 10);
     const skip = (page - 1) * pageSize;
 
     const [result] = await Product.aggregate([
+      {
+        $match: { product_status: q },
+      },
       {
         $facet: {
           products: [{ $skip: skip }, { $limit: pageSize }],
@@ -269,6 +271,48 @@ export const deleteProduct = async (req, res) => {
 
     res.status(200).json({ message: MESSAGES.PRODUCT.DELETED });
   } catch (error) {
+    res.status(500).json({ message: MESSAGES.SERVER_ERROR });
+  }
+};
+
+/**
+ * Generates unique product ID
+ * @param {Object} req - Request object containing the product ID
+ * @param {Object} res - Response object
+ * @returns {Object} - JSON response with success or error message
+ */
+
+export const getUniqueProductCode = async (req, res) => {
+  try {
+    let prefix = "PR-";
+
+    const lastProduct = await Product.findOne({})
+      .sort({ product_code: -1 })
+      .select("product_code");
+
+    let newCode;
+    if (lastProduct) {
+      // Extract the numeric part from the last product code
+
+      let lastCode = lastProduct.product_code.replace(prefix, "");
+
+      let nextCode = (parseInt(lastCode, 10) + 1).toString().padStart(7, "0");
+      newCode = prefix + nextCode;
+    } else {
+      // If no products exist, start from PR-0000001
+      newCode = prefix + "0000001";
+    }
+
+    // Check if the new code exists (just to be sure)
+    const existingProduct = await Product.findOne({ product_code: newCode });
+    if (existingProduct) {
+      return res.status(400).json({ message: "Duplicate product code found." });
+    }
+
+    // Return the new product code
+    res.status(200).json({ code: newCode });
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
 };
