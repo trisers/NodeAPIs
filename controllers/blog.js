@@ -1,4 +1,5 @@
 import { MESSAGES } from "../constants/messages.js";
+import { updateScheduledBlogs } from "../helper/helper.js";
 import Blog from "../models/blogs.js";
 import {
   isValidMongoDbId,
@@ -35,8 +36,8 @@ export const createBlog = async (req, res) => {
       blog_category,
       blog_tags,
       blog_thumbnail,
-      publishDate,
-      drafted,
+      publish_date,
+      blog_status,
     } = parsedBody;
     const newBlog = await Blog.create({
       blog_title,
@@ -44,8 +45,8 @@ export const createBlog = async (req, res) => {
       blog_category,
       blog_tags,
       blog_thumbnail,
-      publishDate,
-      drafted,
+      publish_date,
+      blog_status,
     });
     if (!newBlog) {
       throw new Error(MESSAGES.DB_FAILURE);
@@ -65,11 +66,18 @@ export const createBlog = async (req, res) => {
  */
 export const getAllBlogs = async (req, res) => {
   try {
+    await updateScheduledBlogs();
+
+    const q = req.query.q || "published";
     const page = parseInt(req.query.page || 1);
     const pageSize = parseInt(req.query.pageSize || 10);
     const skip = (page - 1) * pageSize;
 
+    const today = new Date();
     const [result] = await Blog.aggregate([
+      {
+        $match: { blog_status: q, publish_date: { $lte: today } },
+      },
       {
         $facet: {
           blogs: [{ $skip: skip }, { $limit: pageSize }],
@@ -88,6 +96,7 @@ export const getAllBlogs = async (req, res) => {
       nextPage: page < totalPages ? page + 1 : null,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: MESSAGES.SERVER_ERROR });
   }
 };
@@ -145,7 +154,7 @@ export const updateBlog = async (req, res) => {
       blog_tags,
       blog_thumbnail,
       drafted,
-      publishDate,
+      publish_date,
     } = parsedBody;
 
     const updateBlog = await Blog.findByIdAndUpdate(
@@ -157,7 +166,7 @@ export const updateBlog = async (req, res) => {
         blog_tags,
         blog_thumbnail,
         drafted,
-        publishDate,
+        publish_date,
       },
       { new: true }
     );
