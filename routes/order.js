@@ -11,9 +11,11 @@ import { verifyToken } from "../middlewares/authentication.js";
 
 const router = express.Router();
 
-router.post("/", verifyToken, createOrder);
+// SUPERADMIN
 router.get("/", verifySuperAdminToken, getAllOrders);
 
+// USER
+router.post("/", verifyToken, createOrder);
 router.get("/:order_id", getOrderById);
 router.patch("/:order_id", updateOrder);
 router.delete("/:order_id", deleteOrder);
