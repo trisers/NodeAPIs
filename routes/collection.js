@@ -13,6 +13,7 @@ import { createMulter } from "../config/multer.js";
 const router = express.Router();
 const UploadCollectionImage = createMulter("uploads/collections");
 
+// SUPERADMIN
 router.post(
   "/",
   verifySuperAdminToken,
@@ -20,8 +21,6 @@ router.post(
   createCollection
 );
 router.get("/", verifySuperAdminToken, getAllCollections);
-
-router.get("/:collection_id", getCollection);
 router.put(
   "/:collection_id",
   verifySuperAdminToken,
@@ -29,5 +28,8 @@ router.put(
   updateCollection
 );
 router.delete("/:collection_id", deleteCollection);
+
+// USER
+router.get("/:collection_id", getCollection);
 
 export default router;

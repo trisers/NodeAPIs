@@ -14,12 +14,14 @@ const router = express.Router();
 
 const uploadGallery = uploadMultipleFiles("/uploads/products", "gallery", 10);
 
+// SUPERADMIN
 router.post("/", verifySuperAdminToken, uploadGallery, createProduct);
-router.get("/", getAllProducts);
-router.get("/code", getUniqueProductCode);
-
-router.get("/:slug", getProduct);
+router.get("/code", verifySuperAdminToken, getUniqueProductCode);
 router.put("/:product_id", verifySuperAdminToken, uploadGallery, updateProduct);
 router.delete("/:product_id", verifySuperAdminToken, deleteProduct);
+
+// USER
+router.get("/", getAllProducts);
+router.get("/:slug", getProduct);
 
 export default router;
