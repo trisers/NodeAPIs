@@ -35,6 +35,7 @@ export const createProduct = async (req, res) => {
       product_status,
       product_code,
       sku,
+      product_gender,
     } = parsedBody;
     let product_gallery = [];
 
@@ -81,6 +82,7 @@ export const createProduct = async (req, res) => {
       product_sizes,
       product_status,
       product_code,
+      product_gender,
     });
 
     if (!product) {
@@ -125,6 +127,7 @@ export const updateProduct = async (req, res) => {
       product_colors,
       product_sizes,
       product_status,
+      product_gender,
     } = parsedBody;
 
     req?.files?.map((file) => {
@@ -174,6 +177,7 @@ export const updateProduct = async (req, res) => {
       product_colors,
       product_sizes,
       product_status,
+      product_gender,
     });
 
     if (!product) {
