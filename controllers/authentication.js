@@ -206,7 +206,7 @@ export const login = async (req, res) => {
       return res.status(422).json({ message: validate });
     }
     const savedUser = await User.findOne({ email }).select(
-      "full_name email role email_verified status password"
+      "full_name email role email_verified status password access_levels"
     );
     if (!savedUser) {
       return res.status(404).json({ message: MESSAGES.USER.NOT_FOUND });
@@ -236,12 +236,14 @@ export const login = async (req, res) => {
       name: savedUser.full_name,
       email: savedUser.email,
       role: savedUser.role,
+      access_levels: savedUser.access_levels,
     });
     let refreshToken = generateRefreshToken({
       userId: savedUser._id,
       name: savedUser.full_name,
       email: savedUser.email,
       role: savedUser.role,
+      access_levels: savedUser.access_levels,
     });
 
     res.status(200).json({ accessToken, refreshToken });

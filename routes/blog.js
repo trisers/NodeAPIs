@@ -8,16 +8,16 @@ import {
   updateBlog,
 } from "../controllers/blog.js";
 import { createMulter } from "../config/multer.js";
-import { verifySuperAdminToken } from "../middlewares/superadmin.js";
+import { checkAccess } from "../middlewares/authentication.js";
 
 const router = express.Router();
-const uploadThumbnail = createMulter("uploads/blogs");
+const uploadThumbnail = createMulter("/uploads/blogs");
 
 // SUPERADMIN
-router.get("/all", verifySuperAdminToken, fetchAllBlogs);
-router.post("/",verifySuperAdminToken, uploadThumbnail.single("thumbnail"), createBlog);
-router.put("/:id",verifySuperAdminToken, uploadThumbnail.single("thumbnail"), updateBlog);
-router.delete("/:id",verifySuperAdminToken, deleteBlog);
+router.get("/all", checkAccess, fetchAllBlogs);
+router.post("/",checkAccess, uploadThumbnail.single("thumbnail"), createBlog);
+router.put("/:id",checkAccess, uploadThumbnail.single("thumbnail"), updateBlog);
+router.delete("/:id",checkAccess, deleteBlog);
 
 // USER
 router.get("/", getAllBlogs);

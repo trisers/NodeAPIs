@@ -8,17 +8,18 @@ import dashboardUserRoutes from "./dashboard-user.js";
 import collectionRoutes from "./collection.js";
 import blogRoutes from "./blog.js";
 import { verifySuperAdminToken } from "../middlewares/superadmin.js";
+import { checkAccess } from "../middlewares/authentication.js";
 const routes = express.Router();
 
 // Use imported routes
-routes.use("/product", productRoutes);
+routes.use("/product", checkAccess, productRoutes);
 routes.use("/order", orderRoutes);
 routes.use("/auth", authRoutes);
 routes.use("/user", userRoutes);
-routes.use("/capabilities", verifySuperAdminToken, capabilitiesRoutes);
-routes.use("/dashboard-user", verifySuperAdminToken, dashboardUserRoutes);
-routes.use("/collection", collectionRoutes);
-routes.use("/blog", blogRoutes);
+routes.use("/capabilities", checkAccess, capabilitiesRoutes);
+routes.use("/dashboard-user", checkAccess, dashboardUserRoutes);
+routes.use("/collection", checkAccess, collectionRoutes);
+routes.use("/blog", checkAccess, blogRoutes);
 
 // Add more routes here as needed
 // router.use('/anotherRoute', anotherRouteFile);

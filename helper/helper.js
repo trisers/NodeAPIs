@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 // import sendgrid from "../config/sendgrid.js";
 import sendGridMail from "../config/sendgrid.js";
 import Blog from "../models/blogs.js";
+import Capabilities from "../models/capabilities.js";
 
 const {
   JWT_SECRET,
@@ -179,4 +180,9 @@ export const updateScheduledBlogs = async () => {
       $set: { blog_status: "published" },
     }
   );
+};
+// Fetch All Capabilites
+export const FetchAllCapabilities = async (req, res) => {
+  const capabilities = await Capabilities.find();
+  return capabilities;
 };
